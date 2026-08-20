@@ -4,7 +4,7 @@
 
 Este proyecto procesa el archivo de insumo `static/insumos/Tablas_procesos_PT 1.xlsx` y construye, en PostgreSQL, una tabla consolidada que cruza personas, sus registros relacionados desagregados y la comisión correspondiente al siguiente día hábil de cada persona.
 
-El desarrollo sigue una estructura "similar" a la del orquestador 2.0 se ha realizado emular la interaccion con la lz tanto la creacion de las zona de procesos como de resultados mediante schemas en la base de datos postgres. Debido a que me encuentro en periodo de vacaciones y no poseeo acceso
+El desarrollo sigue una estructura "similar" a la del orquestador 2.0 se ha realizado emular la interaccion con la lz tanto la creacion de las zona de procesos como de resultados mediante schemas en la base de datos postgres. 
 
 ---
 
