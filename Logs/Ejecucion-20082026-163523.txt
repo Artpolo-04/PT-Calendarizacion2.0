@@ -1,0 +1,15 @@
+2026-08-20 16:35:23 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-163523.txt
+2026-08-20 16:35:23 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 16:35:23 [INFO] Conectado a la base de datos 'landing_zone'
+2026-08-20 16:35:23 [INFO] Tabla eliminada: proceso.personas_con_dia_habil_calculado
+2026-08-20 16:35:23 [INFO] Tabla eliminada: resultados_vsc.srm_registros_agrupados_sya
+2026-08-20 16:35:23 [INFO] Tabla eliminada: resultados_vsc.srm_comisiones_sya
+2026-08-20 16:35:23 [INFO] Tabla eliminada: resultados_vsc.srm_personas_sya
+2026-08-20 16:35:23 [INFO] Limpieza de zonas finalizada
+2026-08-20 16:35:23 [INFO] Zona verificada/creada: proceso
+2026-08-20 16:35:23 [INFO] Zona verificada/creada: resultados_vsc
+2026-08-20 16:35:25 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_registros_agrupados_sya (24 filas)
+2026-08-20 16:35:25 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_personas_sya (24 filas)
+2026-08-20 16:35:25 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_comisiones_sya (144 filas)
+2026-08-20 16:35:25 [INFO] Script SQL 'static/sql/etl/01_insumos/lectura_personas.sql' leído exitosamente (24 filas)
+2026-08-20 16:35:26 [INFO] DataFrame subido exitosamente a proceso.personas_con_dia_habil_calculado (24 filas)

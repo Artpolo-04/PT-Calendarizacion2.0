@@ -1,0 +1,29 @@
+2026-08-20 17:30:58 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-173058.txt
+2026-08-20 17:30:58 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 17:30:59 [INFO] Conectado a la base de datos 'landing_zone'
+2026-08-20 17:30:59 [INFO] Tabla eliminada: proceso.ultima_ingestion_personas_con_dia_habil_calculado
+2026-08-20 17:30:59 [INFO] Tabla eliminada: proceso.ultima_ingestion_comisiones
+2026-08-20 17:30:59 [INFO] Tabla eliminada: proceso.ultima_ingestion_agrupados
+2026-08-20 17:30:59 [INFO] Tabla eliminada: resultados_vsc.srm_registros_agrupados_sya
+2026-08-20 17:30:59 [INFO] Tabla eliminada: resultados_vsc.srm_comisiones_sya
+2026-08-20 17:30:59 [INFO] Tabla eliminada: resultados_vsc.srm_personas_sya
+2026-08-20 17:30:59 [INFO] Tabla eliminada: resultados_vsc.srm_resultados_finales
+2026-08-20 17:30:59 [INFO] Limpieza de zonas finalizada
+2026-08-20 17:30:59 [INFO] Zona verificada/creada: proceso
+2026-08-20 17:30:59 [INFO] Zona verificada/creada: resultados_vsc
+2026-08-20 17:31:00 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_registros_agrupados_sya (24 filas)
+2026-08-20 17:31:00 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_personas_sya (24 filas)
+2026-08-20 17:31:00 [INFO] 'static/insumos/Tablas_procesos_PT 1.xlsx' -> resultados_vsc.srm_comisiones_sya (144 filas)
+2026-08-20 17:31:00 [INFO] Script SQL 'static/sql/etl/01_insumos/lectura_personas.sql' leído exitosamente (24 filas)
+2026-08-20 17:31:02 [INFO] DataFrame subido exitosamente a proceso.ultima_ingestion_personas_con_dia_habil_calculado (24 filas)
+2026-08-20 17:31:02 [INFO] Se encontraron 3 scripts SQL en 'static/sql/etl/01_insumos/'
+2026-08-20 17:31:02 [INFO] Ejecutando: static/sql/etl/01_insumos\lectura_agrupados.sql
+2026-08-20 17:31:02 [INFO] Script SQL 'static/sql/etl/01_insumos\lectura_agrupados.sql' ejecutado exitosamente
+2026-08-20 17:31:02 [INFO] Ejecutando: static/sql/etl/01_insumos\lectura_comisiones.sql
+2026-08-20 17:31:02 [INFO] Script SQL 'static/sql/etl/01_insumos\lectura_comisiones.sql' ejecutado exitosamente
+2026-08-20 17:31:02 [INFO] Ejecutando: static/sql/etl/01_insumos\lectura_personas.sql
+2026-08-20 17:31:02 [INFO] Script SQL 'static/sql/etl/01_insumos\lectura_personas.sql' ejecutado exitosamente
+2026-08-20 17:31:02 [INFO] Todos los scripts de 'static/sql/etl/01_insumos/' fueron ejecutados exitosamente
+2026-08-20 17:31:02 [INFO] Script SQL 'static/sql/etl/02_transformacion/cruce.sql' leído exitosamente (104 filas)
+2026-08-20 17:31:02 [INFO] DataFrame subido exitosamente a resultados_vsc.srm_resultados_finales (104 filas)
+2026-08-20 17:31:02 [INFO] Script SQL 'static/sql/etl/999_limpieza.sql' ejecutado exitosamente

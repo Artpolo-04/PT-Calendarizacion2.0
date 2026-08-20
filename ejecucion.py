@@ -4,35 +4,34 @@ import json
 import logging
 from datetime import datetime
 import pandas as pd
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
-from sqlalchemy import inspect
+import holidays
+from datetime import timedelta
+from static.utils.helper_base_datos import (
+    crear_conexion,
+    crear_zonas,
+    cargar_insumos,
+    limpiar_base,
+    ejecucion_sql,
+    leer_sql_como_df,
+    subir_df_a_tabla,
+    ejecutar_carpeta_sql,
+)
 
 
 # ---------------------------------------------------------------------------
 # 1. CONFIGURACIÓN
 # ---------------------------------------------------------------------------
 
-# Ruta del archivo de configuración
 RUTA_CONFIG = "config.json"
-
-# Carpeta donde se guardan los logs de ejecución
 CARPETA_LOGS = "Logs"
 
 
-
-
 # ---------------------------------------------------------------------------
-# 2. FUNCIONES
+# 2. FUNCIONES DE SOPORTE (logging, config, definición de insumos)
 # ---------------------------------------------------------------------------
 
 def configurar_logging(carpeta: str = CARPETA_LOGS) -> str:
-    """
-    Crea (si no existe) la carpeta de logs y configura el logging para que
-    escriba tanto en un archivo .txt como en consola.
-
-    Nombre del archivo: Ejecucion-DDMMAAAA-HHMMSS.txt
-    """
+    """Crea (si no existe) la carpeta de logs y configura los logs para que queden grabados."""
     os.makedirs(carpeta, exist_ok=True)
 
     ahora = datetime.now()
@@ -74,41 +73,8 @@ def cargar_configuracion(ruta: str = RUTA_CONFIG) -> dict:
         sys.exit(1)
 
 
-def crear_conexion(db_config: dict) -> Engine:
-    """Crea y retorna el engine de conexión a PostgreSQL a partir del dict 'postgres' del config.json."""
-    url = (
-        f"postgresql+psycopg2://{db_config['usuario']}:{db_config['password']}"
-        f"@{db_config['host']}:{db_config['puerto']}/{db_config['base_datos']}"
-    )
-    try:
-        engine = create_engine(url)
-        # probar conexión
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        logging.info(f"Conectado a la base de datos '{db_config['base_datos']}'")
-        return engine
-    except Exception as e:
-        logging.error(f"No se pudo conectar a la base de datos: {e}")
-        sys.exit(1)
-
-
-def crear_zonas(engine: Engine, zonas: list[str]) -> None:
-    """Crea los schemas (zonas) si no existen."""
-    with engine.connect() as conn:
-        for zona in zonas:
-            conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {zona}"))
-            conn.commit()
-            logging.info(f"Zona verificada/creada: {zona}")
-
-
 def construir_cargas_excels(prefijo: str, cargas_base: list[dict]) -> list[dict]:
-    """
-    Toma la lista de insumos (cada ítem ya trae en 'zona' el nombre real del
-    schema, resuelto por creacion_insumos) y arma la lista final agregando
-    el prefijo al nombre de la tabla.
-
-    Formato resultante: zona.prefijo_tabla
-    """
+    """Arma la lista final de cargas agregando el prefijo al nombre de la tabla."""
     cargas_finales = []
     for item in cargas_base:
         cargas_finales.append({
@@ -117,56 +83,16 @@ def construir_cargas_excels(prefijo: str, cargas_base: list[dict]) -> list[dict]
             "schema": item["zona"],
             "tabla": f"{prefijo}_{item['tabla']}",
         })
-
     return cargas_finales
 
 
-def cargar_excel_a_tabla(engine: Engine, archivo: str, hoja, schema: str, tabla: str) -> None:
-    """Lee un Excel y lo carga como tabla dentro del schema indicado."""
-    try:
-        df = pd.read_excel(archivo, sheet_name=hoja)
-    except FileNotFoundError:
-        print(f"[SKIP] Archivo no encontrado: {archivo}")
-        return
-    except Exception as e:
-        print(f"[ERROR] Fallo leyendo '{archivo}': {e}")
-        return
-
-    try:
-        df.to_sql(
-            name=tabla,
-            con=engine,
-            schema=schema,
-            if_exists="replace",
-            index=False,
-        )
-        print(f"[OK] '{archivo}' -> {schema}.{tabla} ({len(df)} filas)")
-    except Exception as e:
-        print(f"[ERROR] Fallo cargando '{archivo}' en {schema}.{tabla}: {e}")
-
-
-def cargar_insumos(engine: Engine, cargas: list[dict]) -> None:
-
-    print(cargas)
-    """Recorre la lista de configuraciones y carga cada Excel en su tabla."""
-    for item in cargas:
-        cargar_excel_a_tabla(
-            engine=engine,
-            archivo=item["archivo"],
-            hoja=item["hoja"],
-            schema=item["schema"],
-            tabla=item["tabla"],
-        )
-
-
-
-def creacion_insumos(zona_resultados) ->  list[dict]:
-
+def creacion_insumos(zona_resultados) -> list[dict]:
+    """Define los Excel base a cargar."""
     CARGA_EXCELS_BASE = [
         {
             "archivo": "static/insumos/Tablas_procesos_PT 1.xlsx",
-            "hoja": 0,                     
-            "zona": zona_resultados,       
+            "hoja": 0,
+            "zona": zona_resultados,
             "tabla": "registros_agrupados_sya",
         },
         {
@@ -183,35 +109,42 @@ def creacion_insumos(zona_resultados) ->  list[dict]:
         },
         # agrega aquí más archivos según necesites
     ]
-
     return CARGA_EXCELS_BASE
 
 
 
-def limpiar_base(engine: Engine, zona_proceso: str, zona_resultados: str) -> None:
+
+def calculo_proximo_dia_habil(df: pd.DataFrame, columna_fecha: str = "fecha", 
+                                nombre_columna_nueva: str = "proximo_dia_habil") -> pd.DataFrame:
     """
-    Elimina todas las tablas existentes dentro de las zonas (schemas) indicadas,
-    sin borrar el schema en sí. Útil para dejar las zonas "limpias" antes de
-    una nueva carga.
+    Recibe un DataFrame con una columna de fecha en formato AAAAMMDD 
+    y agrega una nueva columna con el siguiente día hábil en Colombia.
+
+    La columna nueva se retorna en el mismo formato AAAAMMDD.
+
     """
-    zonas = [zona_proceso, zona_resultados]
-    inspector = inspect(engine)
+    df = df.copy()
 
-    with engine.connect() as conn:
-        for zona in zonas:
-            tablas = inspector.get_table_names(schema=zona)
+    # Festivos colombianos en el rango de años que abarca la columna de fechas
+    anios = pd.to_datetime(df[columna_fecha], format="%Y%m%d").dt.year
+    festivos_co = holidays.Colombia(years=range(anios.min(), anios.max() + 2))
 
-            if not tablas:
-                logging.info(f"Zona '{zona}': no hay tablas para eliminar")
-                continue
+    def siguiente_dia_habil(fecha: pd.Timestamp) -> pd.Timestamp:
+        siguiente = fecha + timedelta(days=1)
+        while siguiente.weekday() >= 5 or siguiente in festivos_co:
+            siguiente += timedelta(days=1)
+        return siguiente
 
-            for tabla in tablas:
-                conn.execute(text(f'DROP TABLE IF EXISTS "{zona}"."{tabla}" CASCADE'))
-                logging.info(f"Tabla eliminada: {zona}.{tabla}")
+    # Convertir la columna original a datetime
+    fechas_dt = pd.to_datetime(df[columna_fecha], format="%Y%m%d")
 
-            conn.commit()
+    # Calcular el siguiente día hábil para cada fecha
+    df[nombre_columna_nueva] = fechas_dt.apply(siguiente_dia_habil)
 
-    logging.info("Limpieza de zonas finalizada")
+    # Devolver en formato AAAAMMDD (mismo formato de entrada)
+    df[nombre_columna_nueva] = df[nombre_columna_nueva].dt.strftime("%Y%m%d").astype(int)
+
+    return df    
 
 
 # ---------------------------------------------------------------------------
@@ -228,20 +161,73 @@ def main():
 
     zonas = [parametros_lz["zona_procesamiento"], parametros_lz["zona_resultados"]]
 
-
     engine = crear_conexion(db_config)
 
     limpiar_base(engine, parametros_lz["zona_procesamiento"], parametros_lz["zona_resultados"])
 
     CARGA_EXCELS_BASE = creacion_insumos(parametros_lz["zona_resultados"])
-
     cargas_excels = construir_cargas_excels(parametros_lz["prefijo"], CARGA_EXCELS_BASE)
 
     crear_zonas(engine, zonas)
-    
     cargar_insumos(engine, cargas_excels)
 
+
+
+    df_personas = leer_sql_como_df(
+        engine,
+        parametros_lz["zona_procesamiento"],
+        parametros_lz["zona_resultados"],
+        "static/sql/etl/01_insumos/lectura_personas.sql",
+    )
+
+    df_personas = calculo_proximo_dia_habil(df_personas, columna_fecha="fecha", nombre_columna_nueva="proximo_dia_habil")
+
+    subir_df_a_tabla(
+        engine,
+        parametros_lz["zona_procesamiento"],
+        "ultima_ingestion_personas_con_dia_habil_calculado",
+        df_personas
+    )
+
+    ejecutar_carpeta_sql(
+        engine,
+        parametros_lz["zona_procesamiento"],
+        parametros_lz["zona_resultados"],
+        "static/sql/etl/01_insumos/"
+    )
+
+
+
+    df_resultados = leer_sql_como_df(
+        engine,
+        parametros_lz["zona_procesamiento"],
+        parametros_lz["zona_resultados"],
+        "static/sql/etl/02_transformacion/cruce.sql",
+    )
+
+    subir_df_a_tabla(
+        engine,
+        parametros_lz["zona_resultados"],
+        f"{parametros_lz['prefijo']}_resultados_finales",
+        df_resultados
+    )
+
+    print("Tabla de resultados finales creada y cargada exitosamente.")
+
+    print(df_resultados)
+    
+    ejecucion_sql(
+        engine,
+        parametros_lz["zona_procesamiento"],
+        parametros_lz["zona_resultados"],
+        "static/sql/etl/999_limpieza.sql"
+    )
+
+    print("Se han borrado las tablas temporales de la zona de procesamiento. En caso de no querer borrarlas coentar la linea 219 del archivo ejecucion.py")
+
     print("\n=== Proceso finalizado ===")
+
+
 
 
 if __name__ == "__main__":

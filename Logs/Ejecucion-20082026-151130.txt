@@ -1,0 +1,4 @@
+2026-08-20 15:11:30 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-151130.txt
+2026-08-20 15:11:30 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 15:11:32 [ERROR] No se pudo conectar a la base de datos: (psycopg2.OperationalError) 
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

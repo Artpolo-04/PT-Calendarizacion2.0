@@ -1,0 +1,10 @@
+2026-08-20 15:33:06 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-153306.txt
+2026-08-20 15:33:06 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 15:33:07 [INFO] Conectado a la base de datos 'landing_zone'
+2026-08-20 15:33:07 [INFO] Zona 'proceso': no hay tablas para eliminar
+2026-08-20 15:33:07 [INFO] Tabla eliminada: resultados_vsc.srm_registros_agrupados_sya
+2026-08-20 15:33:07 [INFO] Tabla eliminada: resultados_vsc.srm_comisiones_sya
+2026-08-20 15:33:07 [INFO] Tabla eliminada: resultados_vsc.srm_personas_sya
+2026-08-20 15:33:07 [INFO] Limpieza de zonas finalizada
+2026-08-20 15:33:07 [INFO] Zona verificada/creada: proceso
+2026-08-20 15:33:07 [INFO] Zona verificada/creada: resultados_vsc

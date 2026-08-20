@@ -1,0 +1,10 @@
+2026-08-20 15:11:54 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-151154.txt
+2026-08-20 15:11:54 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 15:11:54 [WARNING] La base de datos 'landing_zone' no existe. Intentando crearla...
+2026-08-20 15:12:01 [INFO] Base de datos 'landing_zone' creada exitosamente
+2026-08-20 15:12:01 [INFO] Base de datos 'landing_zone' creada y conectada correctamente
+2026-08-20 15:12:02 [INFO] Zona 'proceso': no hay tablas para eliminar
+2026-08-20 15:12:02 [INFO] Zona 'resultados_vsc': no hay tablas para eliminar
+2026-08-20 15:12:02 [INFO] Limpieza de zonas finalizada
+2026-08-20 15:12:02 [INFO] Zona verificada/creada: proceso
+2026-08-20 15:12:02 [INFO] Zona verificada/creada: resultados_vsc
