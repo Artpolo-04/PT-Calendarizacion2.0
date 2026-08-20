@@ -85,6 +85,8 @@ PT-Calendarizacion2.0/
     ├── sql/
     │   └── etl/
     │       └── 01_insumos/       # Scripts SQL ejecutados sobre PostgreSQL, emuladon la captura de la ultima ingesion en una zona de resultados
+    │       └── 02_transfomacion/       # Scripts SQL ejecutados sobre PostgreSQL en el cual se realiza el cruce final para el insumo final
+
     └── utils/
         └── helper_base_datos.py  # Funciones de manejo de base de datos (conexión, creación de zonas,
                                    # carga de Excel a tabla, limpieza, ejecución de SQL, lectura a DataFrame, etc.)
@@ -111,4 +113,48 @@ El script `ejecucion.py` sigue estos pasos, en orden:
 
 ---
 
-## 🧩 Orquestador 2.0
+## 🧩 SEGUNDO PUNTO Orquestador 2.0 
+
+## Funcionamiento del Orquestador 2.0
+
+### ¿Qué es?
+
+El Orquestador 2.0 es una librería interna que estandariza la forma en que se construyen y ejecutan los paquetes analíticos desplegados en Calendarización. Provee una estructura común de ejecución, logging, manejo de configuración y conexión a la plataforma analítica (a través de helpers como `impala-helper` y `sparky-bc`), de modo que cualquier desarrollador siga el mismo patrón al construir sus rutinas.
+
+Se compone principalmente de tres piezas:
+
+- **`Orchestrator`**: clase que orquesta la ejecución ordenada de una lista de `Steps`.
+- **`Step`**: clase abstracta que representa cada paso del proceso.
+- **`Logger`**: clase encargada de administrar y visualizar el log de ejecución de todo el proceso.
+
+---
+
+### ¿Para qué son los Steps?
+
+Un **Step** es la unidad mínima de ejecución del orquestador.
+
+- El cual contiene la lógica específica de cada tarea por ejemplo: cargar insumos, calcular el día hábil, ejecutar un SQL, etc.
+---
+
+### ¿Cuándo se lee el `config.json`?
+
+El archivo `config.json` se lee **al momento de inicializar el Orquestador**, antes de ejecutar cualquier Step.
+---
+
+### Flujo de ejecución (`ejecutar()`)
+
+1. El Orquestador recorre la lista de `steps` en el orden en que fueron definidos.
+2. Por cada Step:
+   - `iniciar_tarea(task_id)` — Reporta el inicio de la tarea en el log.
+   - Se ejecuta el método `ejecutar()` propio del Step (la lógica de negocio definida por el desarrollador).
+   - `actualizar(estado, duracion)` — actualiza el estado de la tarea (éxito, error, etc.) y su duración.
+   - `finalizar_tarea(task_id)` — cierra la tarea y deja el mensaje final en el archivo de logs.
+3. Si ocurre un error en algún Step:
+   - `log_exception(ex)` — registra el stack de error indicando el punto exacto de la falla.
+   - `reStarter(step, tries, maxTries)` — permite reintentar la ejecución de ese Step hasta un número máximo de intentos (`maxTries`) antes de detener el proceso.
+
+---
+
+### Logging
+
+Toda la ejecución queda registrada mediante la clase `Logger`.
