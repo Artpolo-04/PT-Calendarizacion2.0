@@ -4,7 +4,16 @@
 
 Este proyecto procesa el archivo de insumo `static/insumos/Tablas_procesos_PT 1.xlsx` y construye, en PostgreSQL, una tabla consolidada que cruza personas, sus registros relacionados desagregados y la comisión correspondiente al siguiente día hábil de cada persona.
 
-El desarrollo sigue una estructura "similar" a la del orquestador 2.0 se ha realizado emular la interaccion con la lz tanto la creacion de las zona de procesos como de resultados mediante schemas en la base de datos postgres. 
+## Emulación de la Landing Zone (LZ)
+
+Dado que este ejercicio no cuenta con acceso a una licencia de la LZ, el desarrollo emula su comportamiento utilizando una estructura **similar** a la del Orquestador 2.0, representando las zonas de la LZ como **schemas** dentro de una base de datos PostgreSQL local.
+
+Concretamente, se crean dos zonas parametrizadas desde el `config.json`:
+
+- **Zona de procesamiento** (`zona_procesamiento`): equivalente a la zona de proceso de la LZ, donde se alojan las tablas intermedias/temporales del flujo.
+- **Zona de resultados** (`zona_resultados`): equivalente a la zona de resultados de la LZ, donde se cargan los insumos base y la tabla final consolidada.
+
+Ambos nombres son configurables y no están hardcodeados en el código, de modo que el mismo desarrollo podría apuntar a distintos ambientes simplemente cambiando el `config.json`.
 
 ---
 
