@@ -1,0 +1,3 @@
+2026-08-19 23:53:43 [INFO] Log de ejecución iniciado: Logs\Ejecucion-19082026-235343.txt
+2026-08-19 23:53:43 [INFO] Configuracion cargada desde 'config.json'
+2026-08-19 23:53:48 [INFO] Conectado a la base de datos 'landing_zone'

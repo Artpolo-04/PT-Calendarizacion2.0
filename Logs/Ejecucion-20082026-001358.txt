@@ -1,0 +1,11 @@
+2026-08-20 00:13:58 [INFO] Log de ejecución iniciado: Logs\Ejecucion-20082026-001358.txt
+2026-08-20 00:13:58 [INFO] Configuracion cargada desde 'config.json'
+2026-08-20 00:13:59 [INFO] Conectado a la base de datos 'landing_zone'
+2026-08-20 00:13:59 [INFO] Zona 'proceso': no hay tablas para eliminar
+2026-08-20 00:13:59 [INFO] Zona 'resultados_vsc': no hay tablas para eliminar
+2026-08-20 00:13:59 [INFO] Limpieza de zonas finalizada
+2026-08-20 00:13:59 [ERROR] Zona 'resultados_vsc' no está definida en 'parametros_lz' del config.json
+2026-08-20 00:13:59 [ERROR] Zona 'resultados_vsc' no está definida en 'parametros_lz' del config.json
+2026-08-20 00:13:59 [ERROR] Zona 'resultados_vsc' no está definida en 'parametros_lz' del config.json
+2026-08-20 00:13:59 [INFO] Zona verificada/creada: proceso
+2026-08-20 00:13:59 [INFO] Zona verificada/creada: resultados_vsc

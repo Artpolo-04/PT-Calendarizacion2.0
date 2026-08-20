@@ -1,0 +1,2 @@
+2026-08-19 22:46:09 [INFO] Log de ejecución iniciado: Logs\Ejecucion-19082026-224609.txt
+2026-08-19 22:46:10 [ERROR] No se pudo conectar a la base de datos: No module named 'psycopg2'

@@ -1,0 +1,5 @@
+2026-08-19 23:31:11 [INFO] Log de ejecución iniciado: Logs\Ejecucion-19082026-233111.txt
+2026-08-19 23:31:11 [INFO] Configuracion cargada desde 'config.json'
+2026-08-19 23:31:11 [INFO] Conectado a la base de datos 'postgres'
+2026-08-19 23:31:11 [INFO] Zona verificada/creada: proceso
+2026-08-19 23:31:11 [INFO] Zona verificada/creada: resultados_vsc

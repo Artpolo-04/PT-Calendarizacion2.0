@@ -1,0 +1,2 @@
+2026-08-19 23:51:17 [INFO] Log de ejecución iniciado: Logs\Ejecucion-19082026-235117.txt
+2026-08-19 23:51:17 [INFO] Configuracion cargada desde 'config.json'

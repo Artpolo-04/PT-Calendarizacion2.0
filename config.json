@@ -1,0 +1,14 @@
+{
+    "postgres": {
+        "usuario": "postgres",
+        "password": "admin",
+        "host": "localhost",
+        "puerto": "5432",
+        "base_datos": "landing_zone"
+    },
+    "parametros_lz": {
+        "prefijo": "srm",
+        "zona_procesamiento": "proceso",
+        "zona_resultados": "resultados_vsc"
+    }
+}
